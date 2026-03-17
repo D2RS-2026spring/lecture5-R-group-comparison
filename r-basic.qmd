@@ -27,9 +27,12 @@ graph LR
 ::: {.callout-tip}
 ## 常用分析包
 
+- `readr`：数据读取和保存
+- `tidyr`：数据清洗
 - `dplyr`：数据处理
+- `stringr`：文本处理
+- `forcats`：因子处理
 - `ggplot2`：数据可视化
-- `caret`：机器学习
 :::
 
 下面是一个完整的数据分析示例：
@@ -125,7 +128,7 @@ list_example <- list(
 )
 
 print(data_frame)
-print(list_example$data_frame)
+print(list_example)
 ```
 
 ::: {.callout-note}
@@ -255,9 +258,6 @@ ggplot(scatter_data, aes(x = x, y = y, color = group)) +
 ```{r}
 #| label: fig-ggplot2-chart-types
 #| fig-cap: "常见图表类型"
-#| layout-ncol: 3
-#| fig-width: 9
-#| fig-height: 3
 
 # 折线图
 time_data <- data.frame(
@@ -282,9 +282,7 @@ p3 <- ggplot(scatter_data, aes(x = group, y = x, fill = group)) +
   labs(title = "箱线图") +
   theme_bw()
 
-p1
-p2
-p3
+cowplot::plot_grid(p1, p2, p3, labels = "auto", ncol = 3)
 ```
 
 #### 图层叠加
@@ -297,7 +295,7 @@ p3
 
 ggplot(scatter_data, aes(x = group, y = x, fill = group)) +
   geom_boxplot() +
-  geom_jitter(aes(color = group), size = 3, alpha = 0.7) +
+  geom_jitter(aes(color = group), size = 3, width = 0.3, show.legend = FALSE) +
   labs(title = "箱线图叠加散点") +
   theme_bw()
 ```
@@ -360,7 +358,7 @@ print(wide_data_again)
 ```
 
 ::: {.callout-note}
-`pivot_longer()`和`pivot_wider()`是tidyr包的核心函数，分别用于宽长格式转换。早期版本使用的`gather()`和`spread()`已过时。
+`pivot_longer()`和`pivot_wider()`是tidyr包的核心函数，分别用于宽长格式转换。这两个函数在数据清洗的时候作用很大，是必须要掌握的两个工具。
 :::
 
 ### 数据检查和清洗

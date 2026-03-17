@@ -313,6 +313,8 @@ aov_p
 ```{r}
 #| label: fig-aov-p-density
 #| fig-cap: "所有碳源中检验最终比例三种共培养是否不同的调整后p值(ANOVA)的密度分布。"
+#| fig-width: 3
+#| fig-height: 2.5
 p.cutoff <- 0.05
 p1 <- ggplot(aov_p,aes(p.adj)) + 
   # geom_histogram(bins=30) + 
@@ -332,7 +334,8 @@ p1
 ```{r}
 #| label: fig-aov-p-bar
 #| fig-cap: "调整后p值显著性频数分布（按碳源偏好性着色）"
-#| fig-width: 4
+#| fig-width: 3
+#| fig-height: 3.5
 p2 <- ggplot(aov_p, aes(p.adj.signif,fill=prefer)) + geom_bar() +
   labs(x="Significance of adjusted p-value",y="Frequency") + 
   # geom_text(aes(label=Freq),vjust=0,nudge_y = 1) +
@@ -348,8 +351,8 @@ p2
 
 ```{r}
 #| label: fig-2B
-#| fig-width: 6
-#| fig-height: 8
+#| fig-width: 5.5
+#| fig-height: 6
 #| fig-cap: "（原文图 2B,C）共培养的最终比例。最终比例显著结果(B)或非显著结果(C)的示例。每个子图上方的标签表示碳源。"
 merged$ratio0 <- relevel(merged$ratio0, "less")
 
@@ -371,7 +374,8 @@ p2 <- ggplot(
 
 plots <- lapply(list(p1,p2),function(x){
   x + geom_boxplot() + geom_jitter() +
-    geom_text(aes(x="equal", y=0.15,label= paste("p.adj=",p.adj,sep = "")),check_overlap = T,size=3,show.legend = FALSE) +
+    geom_text(aes(x="equal", y=0.15,label= paste("p.adj=",p.adj,sep = "")),
+    check_overlap = T,size=3,show.legend = FALSE) +
     geom_text(aes(x="less",y=.65,label=carbon_id),color="grey",size=3) +
     facet_wrap(~carbon_id,
                ncol=5,
@@ -425,6 +429,8 @@ plot_grid(plotlist = plots, ncol=2,labels=c("A","B"))
 ```{r}
 #| label: fig-3C
 #| fig-cap: "碳源利用偏好性对最终比例的影响。箱线图显示了不同初始比例的前提下，不同碳源偏好性下的最终比例。"
+#| fig-width: 4
+#| fig-height: 3.5
 ratio0_labeller <- function(x){
   name_of_ratio0 <- c("P. putida","1:1000","1:1","1000:1","E. coli") 
   names(name_of_ratio0) <- c("none","less","equal","more","all")
@@ -440,7 +446,8 @@ p1 <- ggplot(merged,aes(x=prefer,y=ratio1)) +
                                    angle = 60,
                                    hjust = 1,
                                    vjust = 1)) +
-  stat_compare_means(method="wilcox.test",comparisons = list(c("EC","None"),c("None","PP"),c("EC","PP")),size=3) +
+  stat_compare_means(method="wilcox.test",
+  comparisons = list(c("EC","None"),c("None","PP"),c("EC","PP")),size=3) +
   labs(x="Carbon Source Preference", y="Final Ratio (EC/PP)") +
   ylim(c(NA,1.5))
 
@@ -452,6 +459,8 @@ p1
 ```{r}
 #| label: fig-3D
 #| fig-cap: "初始比例对最终比例的影响。箱线图显示了不同碳源偏好类型中，不同初始比例下的最终比例。"
+#| fig-width: 4
+#| fig-height: 3.5
 prefer_labeller <- function(x){
   name_of_prefer <- c("None","E. coli","P. putida")
   names(name_of_prefer) <- c("None","EC","PP")
@@ -462,7 +471,8 @@ p2 <- ggplot(merged,aes(x=ratio0,y=ratio1)) +
   geom_boxplot() + 
   facet_wrap(~prefer, labeller = labeller(prefer = prefer_labeller)) + 
   theme(strip.text = element_text(face = "italic")) +
-  stat_compare_means(method="wilcox.test",comparisons = list(c("less","equal"),c("equal","more"),c("less","more")),size=3) +
+  stat_compare_means(method="wilcox.test",
+  comparisons = list(c("less","equal"),c("equal","more"),c("less","more")),size=3) +
   scale_x_discrete(breaks=c("less","equal","more"),labels=c("1:1000","1:1","1000:1")) +
     theme(axis.text.x = element_text(angle = 60, hjust = 1,vjust = 1)) +
   labs(x="Initial Ratio (EC/PP)", y="Final Ratio (EC/PP)") +
@@ -542,6 +552,8 @@ p
 
 ```{r}
 #| label: fig-cue-heatmap
+#| fig-width: 6
+#| fig-height: 3.5
 #| fig-cap: 初始比例调控共培养的碳源利用谱。按使用组对碳源进行聚类。在热图中,顶部的条带表示碳源类型,底部的数字表示碳源ID,右侧给出了实验重复。图例条表示CUE值的范围。
 anno_carbon_group <- carbon_group %>% 
   left_join(carbon_prefer) %>%
@@ -598,13 +610,15 @@ hsd_group <- biolog_24h_U2 %>%
 #| fig-cap: 14种U2碳源的单培养和共培养的CUE(从左到右,从上到下)。x轴表示培养条件,y轴表示CUE。进行了ANOVA和Tukey多重比较。箱线图上的文本表示不同培养物之间是否观察到显著差异。
 u2_p1 <- ggplot(biolog_24h_U2, aes(ratio0,A590)) + 
   geom_boxplot() + 
-  geom_text(aes(x="none",y=max(A590)*1.1,label=carbon_id),color="grey",vjust=1,size=3,show.legend = F) +
+  geom_text(aes(x="none",y=max(A590)*1.1,label=carbon_id),
+  color="grey",vjust=1,size=3,show.legend = F) +
   geom_text(aes(x=ratio0,y=q3,label=groups),show.legend = F,
             data = hsd_group,inherit.aes = F,
             vjust=0,nudge_y = .2,hjust=0) +
   facet_wrap(~carbon_id,ncol=5,
              labeller = labeller(carbon_id=carbon_name_labeller)) +
-  scale_x_discrete(breaks=c("none","less","equal","more","all"),labels=c("P. putida","1:1000","1:1","1000:1","E. coli")) +
+  scale_x_discrete(breaks=c("none","less","equal","more","all"),
+  labels=c("P. putida","1:1000","1:1","1000:1","E. coli")) +
   scale_y_continuous(breaks = c(0,1,2)) +
   labs(x="",y="CUE") + 
   # ggpubr::stat_compare_means(method="aov",label="p.format") +
