@@ -1,14 +1,18 @@
 project:
   type: book
 
+execute: 
+  freeze: auto
+  error: true
+
 book:
   title: "Lecture 5: R Group Comparison"
   author: "gaoch"
   date: now
   chapters:
     - index.qmd
-    - intro.qmd
     - summary.qmd
+    - r-basic.qmd
     - datasets-in-r.qmd
     - grouped-data-analysis.qmd
     - grouped-data-analysis-in-action.qmd
@@ -20,11 +24,7 @@ format:
   html:
     theme: cosmo
   pdf:
-    documentclass: scrreprt
-    include-in-header:
-          text: |
-            \sloppy % 解决中英文混排的断行问题
-            \usepackage{ctex} % 中文支持, 用于中文书籍排版
-            \usepackage{amsthm,mathrsfs} % 数学支持, 数学字体
-            \usepackage{fvextra} % 代码块支持, 代码块中支持断行
-            \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}} % 代码块中支持断行
+    documentclass: custom
+    papersize: a4paper
+    fontsize: 9pt
+    include-in-header: preamble.tex

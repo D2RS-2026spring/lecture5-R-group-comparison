@@ -4,3 +4,8 @@ _freeze/
 
 
 *_files/
+site_libs/
+
+.DS_Store
+
+/.quarto/

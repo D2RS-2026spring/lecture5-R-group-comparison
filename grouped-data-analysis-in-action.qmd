@@ -97,7 +97,7 @@ head(qPCR_data)
 
 ```{r}
 #| label: data-carbon
-carbon_name <- read_csv("ratio/data/carbon.csv")
+carbon_name <- read_csv("data/ratio/carbon.csv")
 head(carbon_name)
 ```
 
@@ -188,6 +188,7 @@ EC_prefered <- biolog_mono_A590_24h %>%
 carbon_prefer <- data.frame("carbon_id"=carbon_name$carbon_id,
                             "prefer"="None",
                             stringsAsFactors = F)
+
 # 标记碳源偏好性，PP偏好为"PP"，EC偏好为"EC"
 carbon_prefer[carbon_prefer$carbon_id %in% EC_prefered$carbon_id,"prefer"] <- "EC"
 carbon_prefer[carbon_prefer$carbon_id %in% PP_prefered$carbon_id,"prefer"] <- "PP"
@@ -228,10 +229,10 @@ merged <- left_join(biolog_coculture_24h,qPCR_data) %>%
 
 ```{r}
 #| label: fig-data-normalization
-#| fig-width: 10
 #| fig-cap: "数据标准化。左侧为原始数据的直方图和Q-Q图,右侧为对数转换后的直方图和Q-Q图。由上至下分别为大肠杆菌数量(EC)、恶臭假单胞菌数量(PP)和最终比例(ratio1)。有图可见，这些数据经过对数转换后,大致符合正态分布。"
 #| message: false
-#| out-width: 95%
+#| fig-width: 12
+#| fig-height: 9
 merged <- merged %>% filter(ratio0 %in% c("less","equal","more"))
 
 par(mfrow=c(3,4))
