@@ -114,30 +114,44 @@ head(carbon_name)
 qPCR 定量数据处理:
 
 ```{r}
+#| label: action-qpcr-factor
 qPCR_data <- qPCR_data %>%
-   mutate(ratio0 = factor(ratio0, levels = c("less","equal","more")))
+  mutate(ratio0 = factor(
+    ratio0, levels = c("less","equal","more")))
 ```
 
 通过减去每个平板中阴性对照的值来标准化 `A590`:
 
 ```{r}
+#| label: action-biolog-normalize
 # 标准化
 biolog_24h <- biolog %>% 
-  mutate(ratio0 = factor(ratio0, levels = c("none","less","equal","more","all"))) %>%
-  group_by(plate,ratio0) %>% 
-  mutate(A590=A590-A590[carbon_id==1],A750=A750-A750[carbon_id==1]) %>%   # 将阴性对照设为零
-  filter(carbon_id!=1) %>%
+  mutate(ratio0 = factor(
+    ratio0,
+    levels = c("none","less","equal","more","all")
+  )) %>%
+  group_by(plate, ratio0) %>% 
+  mutate(
+    A590 = A590 - A590[carbon_id == 1],
+    A750 = A750 - A750[carbon_id == 1]
+  ) %>%
+  filter(carbon_id != 1) %>%
   ungroup()
 
 # 分离单培养数据
 biolog_mono_24h <- biolog_24h %>% 
   filter(ratio0 %in% c("none","all")) %>% 
-  mutate(species=factor(ratio0,levels = c("all","none"),labels = c("E. coli","P. putida"))) %>% 
+  mutate(species = factor(
+    ratio0,
+    levels = c("all","none"),
+    labels = c("E. coli","P. putida"))) %>% 
   dplyr::select(-ratio0)
+
 # 共培养数据
 biolog_coculture_24h <- biolog_24h %>% 
   filter(ratio0 %in% c("less","equal","more")) %>%
-  mutate(ratio0 = factor(ratio0, levels = c("less","equal","more")))
+  mutate(ratio0 = factor(
+    ratio0, levels = c("less","equal","more")))
 ```
 
 ## 本研究使用的碳源
@@ -148,7 +162,8 @@ biolog_coculture_24h <- biolog_24h %>%
 
 首先,通过所有培养物中的 `A590` 值对碳源进行聚类。这就是我们所说的"使用组"。使用 R 中的 `hclust()` 方法聚类，然后再使用 `cutree()` 生成了三个使用组（`k = 3`），并分别命名为 `U1`、`U2` 和 `U3`。
 
-```{r defining_carbon_usage}
+```{r}
+#| label: defining-carbon-usage
 M_A590_24h <- biolog_24h %>% 
   mutate(sample=paste(ratio0,plate,sep="-")) %>%
   dplyr::select(sample,carbon_id,A590) %>%
@@ -223,7 +238,8 @@ carbon_name %>%
 我们将所有这些数据合并到R中的一个数据框中,并进行如下统计分析。
 
 ```{r}
-merged <- left_join(biolog_coculture_24h,qPCR_data) %>% 
+#| label: action-merge-data
+merged <- left_join(biolog_coculture_24h, qPCR_data) %>% 
   left_join(carbon_name) %>%
   filter(!is.na(ratio1))
 ```
@@ -261,9 +277,9 @@ qqnorm(log10(merged$ratio1))
 因此,我们对大肠杆菌(EC)和恶臭假单胞菌(PP)的数量进行对数转换。
 
 ```{r}
-merged <- merged  %>%
-  # mutate_at(c("A590"),sqrt) %>%
-  mutate_at(c("EC","PP","ratio1"),log10)
+#| label: action-log-transform
+merged <- merged %>%
+  mutate_at(c("EC","PP","ratio1"), log10)
 ```
 
 
@@ -272,13 +288,18 @@ merged <- merged  %>%
 对于符合正态分布的数据，我们可以使用 ANOVA 检验来揭示每种碳源中三种共培养的最终比例的差异。由于包含多重比较，所以使用"BH"方法对 p 值进行了调整。
 
 ```{r}
-aov_p <- compare_means(ratio1 ~ ratio0,
-                       group.by = "carbon_id",
-                       data=merged,
-                       method = "anova",
-                       p.adjust.method = "BH") %>% 
+#| label: action-anova-final-ratio
+aov_p <- compare_means(
+    ratio1 ~ ratio0,
+    group.by = "carbon_id",
+    data = merged,
+    method = "anova",
+    p.adjust.method = "BH") %>% 
   arrange(p.adj) %>% 
-  mutate(p.adj.signif = cut(p.adj,breaks = c(0,0.01,0.05,1),labels = c("**","*","ns"))) %>%
+  mutate(p.adj.signif = cut(
+    p.adj,
+    breaks = c(0, 0.01, 0.05, 1),
+    labels = c("**", "*", "ns"))) %>%
   left_join(carbon_prefer)
 
 aov_p
@@ -310,6 +331,7 @@ p1
 
 ```{r}
 #| label: fig-aov-p-bar
+#| fig-cap: "调整后p值显著性频数分布（按碳源偏好性着色）"
 #| fig-width: 4
 p2 <- ggplot(aov_p, aes(p.adj.signif,fill=prefer)) + geom_bar() +
   labs(x="Significance of adjusted p-value",y="Frequency") + 
@@ -537,28 +559,35 @@ pheatmap(t(M_A590_24h),
 我们接下来分析，这14 种 U2 碳源下不同体系的CUE[@fig-u2-cue]。
 
 ```{r}
+#| label: action-u2-hsd
 # 仅分析U2碳源
-biolog_24h_U2 <- left_join(biolog_24h,carbon_group) %>% 
-  filter(usage=="U2") 
+biolog_24h_U2 <- left_join(biolog_24h, carbon_group) %>% 
+  filter(usage == "U2") 
 
 # 多重比较
-hsd_group <- lapply(unique(biolog_24h_U2$carbon_id), function(x){
-  m <- aov(A590~ratio0,data=filter(biolog_24h_U2,carbon_id==x))
-  library(agricolae)
-  g <- HSD.test(m,"ratio0",group=TRUE)$groups
-  d <- rownames_to_column(g,var="ratio0")
-  d$carbon_id <- x
-  return(d[-2])
-})
+hsd_group <- lapply(
+  unique(biolog_24h_U2$carbon_id),
+  function(x) {
+    m <- aov(
+      A590 ~ ratio0,
+      data = filter(biolog_24h_U2, carbon_id == x))
+    library(agricolae)
+    g <- HSD.test(m, "ratio0", group = TRUE)$groups
+    d <- rownames_to_column(g, var = "ratio0")
+    d$carbon_id <- x
+    return(d[-2])
+  })
 
 # 合并多重比较结果
-hsd_group <- do.call("rbind",hsd_group)
-hsd_group$ratio0 <- factor(hsd_group$ratio0, 
-                           levels = c("none","less","equal","more","all"))
+hsd_group <- do.call("rbind", hsd_group)
+hsd_group$ratio0 <- factor(
+  hsd_group$ratio0, 
+  levels = c("none","less","equal","more","all"))
+
 # 在箱线图顶部添加组标签
 hsd_group <- biolog_24h_U2 %>% 
-  group_by(ratio0,carbon_id) %>%
-  summarize(q3=quantile(A590)[3]) %>% 
+  group_by(ratio0, carbon_id) %>%
+  summarize(q3 = quantile(A590)[3]) %>% 
   left_join(hsd_group)
 ```
 

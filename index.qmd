@@ -37,11 +37,25 @@
 ::: {.callout-tip}
 ## 环境准备
 
+从课程仓库下载本课程的源代码：
+
+```bash
+git clone git@github.com:D2RS-2026spring/lecture5-r-group-comparison.git
+```
+
 在开始学习之前，请确保你的 R 版本 ≥ 4.1.0，并已安装以下软件包：
 
 ```r
 install.packages(c("tidyverse", "ggpubr", "vegan", "nlme",
                     "car", "dunn.test", "pheatmap", "cowplot",
                     "corrplot", "kableExtra", "agricolae"))
+```
+
+如果你了解 `renv`，还可以一键创建一个可重复的本地分析环境[^1]。
+
+[^1]: 使用 Positron 第一次打开本项目时，renv 会自动尝试创建该环境。
+
+```r
+renv::restore()
 ```
 :::

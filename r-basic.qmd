@@ -20,10 +20,8 @@ showtext::showtext.auto()
 ```{mermaid}
 graph LR
     A[数据导入] --> B[数据清洗]
-    B --> C[数据探索]
-    C --> D[统计分析]
-    D --> E[可视化]
-    E --> F[建模预测]
+    B --> C[数据分析及可视化]
+    C --> D[报告]
 ```
 
 ::: {.callout-tip}
@@ -37,7 +35,8 @@ graph LR
 下面是一个完整的数据分析示例：
 
 ```{r}
-#| label: r-data-analysis-example
+#| label: fig-r-data-analysis-example
+#| fig-cap: "R语言数据分析示例：散点图与线性回归"
 #| warning: false
 #| message: false
 

@@ -5,6 +5,7 @@ R 是一种专门为统计分析和数据可视化设计的编程语言和软件
 因此，在使用 R 语言的时候，不仅需要安装 R 语言本体，还需要根据需要安装相应的软件包。安装他们的过程这里不再赘述，这里我们使用的主要是下面一些软件包，使用时首先通过 `library()` 函数导入，然后就可以调用相应软件包里面的功能。在下面的代码中，他们各自的功能以代码注释的形式写在 `library()` 之上。
 
 ```{r}
+#| label: datasets-load-packages
 # datasets 包含了我们下面要使用的数据集
 library(datasets)
 
@@ -29,6 +30,7 @@ showtext::showtext.auto()
 `npk` 数据集来源于经典的田间施肥试验，它以数据框（`data.frame`）的形式存储，共有 24 行、5 列，记录了 6 个区组(block)下不同氮肥(N)、磷肥(P)、钾肥(K)处理组合对作物产量(yield, 单位为英担/英亩)的影响，其中 N、P、K 均以 0/1 表示未施或施用。该试验采用 2³ 因子设计并结合区组设计，属于典型的裂区田间试验，常用于方差分析（ANOVA）、因子设计与交互作用分析的教学示例。对于农业研究而言，它的意义在于揭示氮、磷、钾三种肥料对作物产量的主效应及交互作用效应，从而为科学施肥和提高产量提供统计依据。
 
 ```{r}
+#| label: datasets-npk-overview
 # 载入数据集
 data(npk)
 
@@ -47,6 +49,7 @@ npk |> count(N, P, K)
 
 
 ```{r}
+#| label: datasets-chickweight-overview
 # 载入数据集
 data(ChickWeight)
 
@@ -72,6 +75,7 @@ summary(ChickWeight)
 `PlantGrowth` 数据集记录了 30 株植物的干重及其所属实验组别，共 2 列变量：植物干重（`weight`）和实验组（`group`，包括对照组 `ctrl` 以及处理组 `trt1`、`trt2`）。实验采用完全随机设计，每组 10 株植物，用于比较两种处理对植物生长的影响。该数据集常用于 ANOVA 教学、组间均值比较和 Tukey 检验，是农业实验设计的典型入门案例。
 
 ```{r}
+#| label: datasets-plantgrowth-overview
 # 载入数据集
 data(PlantGrowth)
 
@@ -98,6 +102,7 @@ PlantGrowth |> group_by(group) |>
 `npk` 数据集是 R 自带的一个作物实验数据集，结构如下：
 
 ```{r}
+#| label: datasets-npk-head
 head(npk)
 ```
 
@@ -106,6 +111,7 @@ head(npk)
 * `yield`：作物产量
 
 ```{r}
+#| label: datasets-npk-str
 str(npk)
 ```
 
@@ -149,6 +155,7 @@ str(npk)
 接下来，我们计算各组合的平均产量来理解因子的效应：
 
 ```{r}
+#| label: datasets-npk-mean-yield
 npk |>
   group_by(N, P, K) |>
   summarise(mean_yield = mean(yield))
@@ -160,6 +167,7 @@ npk |>
 先看单因素 N 的效应：
 
 ```{r}
+#| label: datasets-npk-aov-N
 aov_N <- aov(yield ~ N, data = npk)
 summary(aov_N)
 ```
@@ -202,6 +210,7 @@ summary(aov_N)
 同理可对 `P`、`K` 做单因素 ANOVA。
 
 ```{r}
+#| label: datasets-npk-aov-PK
 # 对施用 P 肥做单因素 ANOVA
 aov_P <- aov(yield ~ P, data = npk)
 summary(aov_P)
@@ -214,6 +223,7 @@ summary(aov_K)
 单因素 ANOVA 也可以写成下面的形式，表示分别分析 N、P、K 对产量的影响，不考虑交互作用。
 
 ```{r}
+#| label: datasets-npk-aov-1way
 aov_1way <- aov(yield ~ N + P + K, data = npk)
 summary(aov_1way)
 ```
@@ -223,6 +233,7 @@ summary(aov_1way)
 单因素 ANOVA 可以帮助我们判断这个因子是否显著，但无法分析交互作用。为了考虑三个肥料之间的交互作用，需要做多因素方差分析。在做多因素 ANOVA 分析时，只需要将上面代码中的加号改成乘号即可。
 
 ```{r}
+#| label: datasets-npk-aov-full
 aov_full <- aov(yield ~ N * P * K, data = npk)
 summary(aov_full)
 ```
@@ -233,6 +244,7 @@ summary(aov_full)
 如果只关注两两交互作用，不考虑三重交互作用，则可以这样写：
 
 ```{r}
+#| label: datasets-npk-aov-2way
 aov_2way <- aov(yield ~ (N + P + K)^2, data = npk)
 summary(aov_2way)
 ```
@@ -242,8 +254,13 @@ summary(aov_2way)
 交互作用图能帮助理解因子之间的相互影响：
 
 ```{r}
-interaction.plot(npk$N, npk$P, npk$yield, fun = mean,
-                 col = c("red","blue"), lty = 1:2, trace.label = "P level")
+#| label: fig-datasets-npk-interaction-NP
+#| fig-cap: "NPK数据集中N×P交互作用图"
+interaction.plot(
+  npk$N, npk$P, npk$yield, fun = mean,
+  col = c("red","blue"), lty = 1:2,
+  trace.label = "P level"
+)
 ```
 
 在这幅图上，横轴是 N 的水平，不同颜色表示 P 的水平，纵轴是产量平均值。如果线基本平行，表示没有明显交互作用，即 N 的效应对产量变化不依赖于 P 的水平，这种情况下可以认为 N 和 P 的效应是独立的；如果线明显交叉或斜率不同，则表示存在交互作用，如 N 施肥时产量随 P 的水平变化很大，但不施用 N 时变化小，说明 N、P 有交互作用。
@@ -251,15 +268,25 @@ interaction.plot(npk$N, npk$P, npk$yield, fun = mean,
 可以分别画 N×P、N×K、P×K 的交互作用图，直观观察交互效应。
 
 ```{r}
+#| label: fig-datasets-npk-interaction-NK-PK
+#| fig-cap: "NPK数据集中N×K和P×K交互作用图"
 # N × K 交互作用
-interaction.plot(npk$N, npk$K, npk$yield, fun = mean,
-                 col = c("green","purple"), lty = 1:2, trace.label = "K level",
-                 xlab = "N level", ylab = "Mean yield", main = "N × K interaction")
+interaction.plot(
+  npk$N, npk$K, npk$yield, fun = mean,
+  col = c("green","purple"), lty = 1:2,
+  trace.label = "K level",
+  xlab = "N level", ylab = "Mean yield",
+  main = "N × K interaction"
+)
 
 # P × K 交互作用
-interaction.plot(npk$P, npk$K, npk$yield, fun = mean,
-                 col = c("orange","brown"), lty = 1:2, trace.label = "K level",
-                 xlab = "P level", ylab = "Mean yield", main = "P × K interaction")
+interaction.plot(
+  npk$P, npk$K, npk$yield, fun = mean,
+  col = c("orange","brown"), lty = 1:2,
+  trace.label = "K level",
+  xlab = "P level", ylab = "Mean yield",
+  main = "P × K interaction"
+)
 ```
 
 
@@ -286,6 +313,7 @@ interaction.plot(npk$P, npk$K, npk$yield, fun = mean,
 这个数据集是学习生物学、生长动力学或纵向数据分析的经典示例。
 
 ```{r}
+#| label: datasets-chickweight-head
 head(ChickWeight)
 ```
 
@@ -297,6 +325,7 @@ head(ChickWeight)
 * `Diet`：饲料类型（因子），实验处理组，用于分析不同饲料对生长的影响
 
 ```{r}
+#| label: datasets-chickweight-str
 str(ChickWeight)
 ```
 
@@ -343,6 +372,7 @@ ggplot(ChickWeight, aes(x = Time, y = weight, group = Chick, color = Diet)) +
 `nlme` 是 **R 语言**中一个功能强大的软件包，它主要用于拟合和分析 **非线性混合效应模型（Nonlinear Mixed-Effects Models）**。`nlme` 软件包的核心功能是处理那些同时包含**固定效应（fixed effects）**（这里是喂养模式）和**随机效应（random effects）**（这里是小鸡个体差异）的复杂数据集。
 
 ```{r}
+#| label: datasets-load-nlme
 # 加载软件包
 library(nlme)
 ```
@@ -361,9 +391,12 @@ $$
 #### 先用 `nlsList()` 为每只小鸡拟合
 
 ```{r}
+#| label: datasets-chickweight-nlslist
 # 按小鸡个体分别拟合逻辑斯蒂曲线
-fm1 <- nlsList(weight ~ SSlogis(Time, Asym, xmid, scal) | Chick,
-               data = ChickWeight)
+fm1 <- nlsList(
+  weight ~ SSlogis(Time, Asym, xmid, scal) | Chick,
+  data = ChickWeight
+)
 summary(fm1)
 ```
 
@@ -372,11 +405,14 @@ summary(fm1)
 #### 用 `nlme()` 构建混合效应模型
 
 ```{r}
+#| label: datasets-chickweight-nlme
 # 混合效应非线性模型：固定效应 + 随机效应
-fm2 <- nlme(weight ~ SSlogis(Time, Asym, xmid, scal),
-            data = ChickWeight,
-            fixed = Asym + xmid + scal ~ Diet,   # 饮食作为固定效应
-            random = Asym ~ 1 | Chick)           # 小鸡的最大体重有个体差异
+fm2 <- nlme(
+  weight ~ SSlogis(Time, Asym, xmid, scal),
+  data = ChickWeight,
+  fixed = Asym + xmid + scal ~ Diet,
+  random = Asym ~ 1 | Chick
+)
 summary(fm2)
 ```
 
@@ -398,6 +434,7 @@ summary(fm2)
 首先，我们将 `fm2` 模型的两种拟合值都提取出来，并添加到 `ChickWeight` 数据框中。
 
 ```{r}
+#| label: datasets-chickweight-predict
 # 提取群体平均预测值（固定效应）
 ChickWeight$fixed_pred <- predict(fm2, level = 0)
 
@@ -469,6 +506,7 @@ ggplot(ChickWeight, aes(x = Time, y = weight, group = Chick, color = Diet)) +
 与前面两个例子类似，在进行统计分析之前，首先通过数据概要和可视化来快速了解数据的分布和特征，这是 R 数据分析的良好实践。
 
 ```{r}
+#| label: datasets-plantgrowth-str
 # 载入数据集
 data(PlantGrowth)
 
@@ -507,6 +545,7 @@ ggplot(PlantGrowth, aes(x = group, y = weight, color = group)) +
 ANOVA 的核心思想是分解总变异。它将植物干重总体的变异分解为**组间变异**（由不同实验组引起的）和**组内变异**（各组内部的随机差异）。通过比较这两部分变异的相对大小（即 F 值），我们可以判断组均值是否真的存在显著差异。
 
 ```{r}
+#| label: datasets-plantgrowth-aov
 # 构建单因素方差分析模型
 fit_pg <- aov(weight ~ group, data = PlantGrowth)
 
@@ -529,6 +568,7 @@ summary(fit_pg)
 
 
 ```{r}
+#| label: datasets-plantgrowth-levene
 library(car)
 leveneTest(weight ~ group, data = PlantGrowth)              
 ```
@@ -544,6 +584,7 @@ leveneTest(weight ~ group, data = PlantGrowth)
 
 
 ```{r}
+#| label: datasets-plantgrowth-shapiro
 shapiro.test(residuals(fit_pg))
 ```
 
@@ -554,6 +595,7 @@ shapiro.test(residuals(fit_pg))
 既然 ANOVA 结果是显著的，且前提假设均满足，我们可以进行**事后检验（Post-hoc Test）**来确定具体是哪几组之间有显著差异。Tukey HSD（Honestly Significant Difference）是一种常用的方法，它能在所有可能的两两比较中控制第一类错误（即错误地拒绝零假设的概率）。
 
 ```{r}
+#| label: datasets-plantgrowth-tukey
 # 使用 TukeyHSD() 函数进行事后多重比较
 TukeyHSD(fit_pg)
 ```

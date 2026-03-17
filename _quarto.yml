@@ -6,6 +6,9 @@ execute:
   error: true
   warning: false
 
+filters: 
+  - quarto-ai-helper
+
 engine: knitr
 
 knitr:
@@ -14,7 +17,7 @@ knitr:
 
 book:
   title: "Lecture 5: R Group Comparison"
-  author: "gaoch"
+  author: "Chun-Hui Gao"
   date: now
   chapters:
     - index.qmd
