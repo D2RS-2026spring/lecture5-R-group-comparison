@@ -1,4 +1,4 @@
-# R 语言入门
+# R 语言入门 {#sec-r-basic}
 
 R语言最初由Ross Ihaka和Robert Gentleman于1993年开发，是从S语言演变而来的开源编程语言。因其强大的数据处理和统计分析能力，R已成为数据科学领域的标准工具之一。
 
@@ -43,17 +43,16 @@ graph LR
 
 library(dplyr)
 library(ggplot2)
-library(caret)
 
 # 生成示例数据
 set.seed(123)
-data <- data.frame(
+demo_data <- data.frame(
   x = rnorm(100),
   y = rnorm(100)
 )
 
 # 描述性统计
-summary_stats <- data |>
+summary_stats <- demo_data |>
   summarise(
     mean_x = mean(x),
     mean_y = mean(y),
@@ -66,9 +65,10 @@ print(summary_stats)
 ```{r}
 #| label: fig-r-scatter
 #| fig-cap: "x和y的散点图"
-#| fig-asp: 0.618
+#| fig-width: 5
+#| fig-height: 3.5
 
-ggplot(data, aes(x = x, y = y)) +
+ggplot(demo_data, aes(x = x, y = y)) +
   geom_point() +
   labs(title = "Scatter Plot of x and y", x = "x", y = "y")
 ```
@@ -78,8 +78,8 @@ ggplot(data, aes(x = x, y = y)) +
 #| warning: false
 
 # 线性回归模型
-model <- train(y ~ x, data = data, method = "lm")
-summary(model$finalModel)
+model <- lm(y ~ x, data = demo_data)
+summary(model)
 ```
 
 ## 基本概念与操作
@@ -238,14 +238,14 @@ ggplot2基于"图形语法"理论，通过层次化的方式创建图形。
 library(ggplot2)
 
 # 创建示例数据
-data <- data.frame(
+scatter_data <- data.frame(
   x = rnorm(100),
   y = rnorm(100),
   group = sample(letters[1:3], 100, replace = TRUE)
 )
 
 # 散点图
-ggplot(data, aes(x = x, y = y, color = group)) +
+ggplot(scatter_data, aes(x = x, y = y, color = group)) +
   geom_point(size = 3, alpha = 0.7) +
   labs(title = "散点图示例", x = "X轴", y = "Y轴") +
   theme_bw()
@@ -256,7 +256,9 @@ ggplot(data, aes(x = x, y = y, color = group)) +
 ```{r}
 #| label: fig-ggplot2-chart-types
 #| fig-cap: "常见图表类型"
-#| layout-ncol: 2
+#| layout-ncol: 3
+#| fig-width: 9
+#| fig-height: 3
 
 # 折线图
 time_data <- data.frame(
@@ -270,13 +272,13 @@ p1 <- ggplot(time_data, aes(x = time, y = value)) +
   theme_bw()
 
 # 直方图
-p2 <- ggplot(data, aes(x = x)) +
+p2 <- ggplot(scatter_data, aes(x = x)) +
   geom_histogram(binwidth = 0.5, fill = "green", alpha = 0.6) +
   labs(title = "直方图") +
   theme_bw()
 
 # 箱线图
-p3 <- ggplot(data, aes(x = group, y = x, fill = group)) +
+p3 <- ggplot(scatter_data, aes(x = group, y = x, fill = group)) +
   geom_boxplot() +
   labs(title = "箱线图") +
   theme_bw()
@@ -291,8 +293,10 @@ p3
 ```{r}
 #| label: fig-ggplot2-layers
 #| fig-cap: "图层叠加示例"
+#| fig-width: 5
+#| fig-height: 3.5
 
-ggplot(data, aes(x = group, y = x, fill = group)) +
+ggplot(scatter_data, aes(x = group, y = x, fill = group)) +
   geom_boxplot() +
   geom_jitter(aes(color = group), size = 3, alpha = 0.7) +
   labs(title = "箱线图叠加散点") +
@@ -373,6 +377,23 @@ data_with_missing <- data.frame(
 )
 
 # 检查缺失值
-complete_data <- complete(data_with_missing)
-print(complete_data)
+cat("各列缺失值数量：\n")
+colSums(is.na(data_with_missing))
+
+# 查看完整行
+cat("\n完整行（无缺失值）：\n")
+data_with_missing[complete.cases(data_with_missing), ]
+
+# 删除含缺失值的行
+cat("\n删除缺失值后：\n")
+tidyr::drop_na(data_with_missing)
+
+# 填充缺失值（用均值填充）
+cat("\n用均值填充缺失值后：\n")
+data_with_missing |>
+  mutate(Score = ifelse(is.na(Score), mean(Score, na.rm = TRUE), Score))
 ```
+
+::: {.callout-note}
+处理缺失值的常用策略包括：删除含缺失值的行（`drop_na()`）、用均值/中位数填充（`replace_na()`）、或使用插值方法。选择哪种方法取决于缺失数据的比例和缺失机制。
+:::

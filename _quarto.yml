@@ -27,11 +27,21 @@ book:
 
 bibliography: references.bib
 
+crossref:
+  fig-title: "图"
+  tbl-title: "表"
+  fig-prefix: "图"
+  tbl-prefix: "表"
+
 format:
   html:
     theme: cosmo
+    code-overflow: wrap
   pdf:
     documentclass: custom
     papersize: a4paper
     fontsize: 9pt
     include-in-header: preamble.tex
+    code-overflow: wrap
+    fig-width: 6
+    fig-height: 4

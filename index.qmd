@@ -1,9 +1,47 @@
-# Preface {.unnumbered}
+# 前言 {.unnumbered}
 
-This is a Quarto book.
+本书是"数据驱动的可重复性研究"系列课程的第五讲，以 **R 语言分组比较** 为核心主题，系统介绍从 R 语言基础到分组数据统计分析的完整知识体系。
 
-To learn more about Quarto books visit <https://quarto.org/docs/books>.
+## 学习目标
 
-This is a book created from markdown and executable code.
+通过本书的学习，你将能够：
 
-See @knuth84 for additional discussion of literate programming.
+1. 掌握 R 语言的基本数据类型、数据结构和核心软件包的使用
+2. 理解假设检验的标准流程，并能根据数据特征选择合适的统计方法
+3. 使用参数方法（t 检验、ANOVA）和非参数方法（Wilcoxon 检验、Kruskal-Wallis 检验）进行分组比较
+4. 掌握多变量分析方法（MANOVA、RDA、CCA、PERMANOVA、Mantel 检验）的基本原理与 R 实现
+5. 使用 `ggplot2`、`ggpubr` 等工具制作发表级图表
+6. 从原始数据出发，通过 R 代码实现数据处理、统计分析和可视化的全流程自动化
+
+## 适用读者
+
+本书适合以下读者：
+
+- 具有基本统计学概念（如均值、标准差、p 值）的研究生和科研人员
+- 希望从 Excel/SPSS 过渡到 R 语言进行数据分析的初学者
+- 需要进行分组比较和多变量分析的生物学、农学、生态学等领域研究者
+
+## 章节结构
+
+本书共分为四个主要章节，按照"基础→方法→实战"的逻辑递进组织：
+
+- **R 语言入门**（@sec-r-basic）：介绍 R 语言的基本概念、数据结构和核心软件包
+- **经典数据集分析**（@sec-datasets）：通过 R 自带数据集演示因子设计、ANOVA、混合效应模型等分析方法
+- **分组数据分析方法**（@sec-grouped-analysis）：系统梳理从简单到复杂的分组比较统计方法体系
+- **分组数据分析实战**（@sec-action）：以真实论文数据为例，展示完整的可重复性研究流程
+
+## 使用说明
+
+本书中的所有代码均可直接在 R 环境中运行。建议读者在阅读时同步执行代码，以加深理解。书中使用的主要 R 包包括 `tidyverse`、`ggplot2`、`ggpubr`、`vegan` 等，请确保已安装这些包。
+
+::: {.callout-tip}
+## 环境准备
+
+在开始学习之前，请确保你的 R 版本 ≥ 4.1.0，并已安装以下软件包：
+
+```r
+install.packages(c("tidyverse", "ggpubr", "vegan", "nlme",
+                    "car", "dunn.test", "pheatmap", "cowplot",
+                    "corrplot", "kableExtra", "agricolae"))
+```
+:::

@@ -1,4 +1,4 @@
-# 分组数据分析
+# 分组数据分析 {#sec-grouped-analysis}
 
 ```{r}
 #| include: false
@@ -133,12 +133,15 @@ if(shapiro_total$p.value > 0.05) {
     cat("\n→ 数据偏离正态分布（p ≤0.05），建议优先使用非参数方法。\n")
 }
 
-# 结果可视化
-ggqqplot(ToothGrowth, "len") +
+# 结果可视化：Q-Q 图
+ggplot(ToothGrowth, aes(sample = len)) +
+    stat_qq() +
+    stat_qq_line(color = "steelblue") +
     labs(title = "Q-Q正态性检验图",
          subtitle = paste("总体验证: W =", round(shapiro_total$statistic,3),
-                         "p =", round(shapiro_total$p.value,3))) +
-    theme(legend.position = "none")
+                         "p =", round(shapiro_total$p.value,3)),
+         x = "理论分位数",
+         y = "样本分位数")
 ```
 
 从正态性检验结果来看：
@@ -211,10 +214,10 @@ cat("3. VC组检验: W =", round(shapiro_VC$statistic,3),
 
 这个结果提示我们：
 
-1.  虽然各组数据都符合正态分布假设，但将不同处理组的数据合并分析可能并不合适。
+1.  **OJ 组不满足正态分布假设**（p = 0.024 < 0.05），而 VC 组满足。将不同处理组的数据合并分析可能会掩盖各组的特征。
 2.  更好的分析策略是：
-    -   分别对OJ组和VC组进行单样本t检验
-    -   或者使用双样本t检验比较两组之间的差异
+    -   分别对OJ组和VC组进行单样本t检验（VC组满足正态性），或对OJ组使用非参数的Wilcoxon检验
+    -   或者使用双样本t检验/Wilcoxon秩和检验比较两组之间的差异
     -   考虑剂量因素的影响，可能需要使用方差分析(ANOVA)
 
 这个案例说明，在进行统计分析时，不仅要考虑统计方法的适用条件，还要充分理解数据的结构和研究问题的本质。
@@ -264,7 +267,7 @@ ggplot(ToothGrowth, aes(x = len)) +
        y = "频数")
 ```
 
-这段代码绘制了 `len` 的直方图，并用红色虚线标出假设的中位数 15。
+这段代码绘制了 `len` 的直方图，并用红色虚线标出假设的中位数 18。
 
 ## 独立样本 T 检验
 
@@ -360,7 +363,7 @@ t检验结果显示：
 
 ## Wilcoxon 秩和检验
 
-可以使用 `ggpubr` 进行 **Wilcoxon 秩和检验**（Mann-Whitney U 检验），并在图中显示显著性（p 值）。以下是基于 `ToothGrowth` 数据集的示例，比较 `supp`（补充剂类型）对 `len`（牙齿生长长度）的影响。
+下面使用 `ggplot2` 绘制箱线图，并通过 `ggpubr` 包的 `stat_compare_means()` 在图中添加 **Wilcoxon 秩和检验**（Mann-Whitney U 检验）的显著性标注。以下是基于 `ToothGrowth` 数据集的示例，比较 `supp`（补充剂类型）对 `len`（牙齿生长长度）的影响。
 
 #### 代码示例
 
@@ -369,21 +372,25 @@ t检验结果显示：
 library(ggpubr)
 
 # 绘制箱线图并添加 Wilcoxon 秩和检验结果
-ggboxplot(ToothGrowth, x = "supp", y = "len", 
-          color = "supp", palette = "jco") +
+ggplot(ToothGrowth, aes(x = supp, y = len, color = supp)) +
+  geom_boxplot() +
+  geom_jitter(width = 0.2, alpha = 0.5) +
   stat_compare_means(method = "wilcox.test", label = "p.format") +
   labs(title = "OJ vs. VC 补充剂对牙齿生长的影响（Wilcoxon 检验）",
        x = "补充剂类型",
-       y = "牙齿生长长度")
+       y = "牙齿生长长度") +
+  theme_bw() +
+  guides(color = "none")
 ```
 
 #### 代码解释
 
-1.  **`ggboxplot()`**：绘制分组箱线图，并使用 `color` 区分类别。\
-2.  **`stat_compare_means(method = "wilcox.test", label = "p.format")`**：
+1.  **`ggplot() + geom_boxplot()`**：使用标准 ggplot2 语法绘制分组箱线图，`color = supp` 区分类别。\
+2.  **`geom_jitter()`**：添加原始数据点，`width = 0.2` 控制水平抖动，避免点重叠。\
+3.  **`stat_compare_means(method = "wilcox.test", label = "p.format")`**：
     -   `wilcox.test` 进行 **Wilcoxon 秩和检验**（Mann-Whitney U 检验）。\
     -   `p.format` 以格式化方式显示 p 值。\
-3.  **`labs()`**：设置图表标题和坐标轴标签。
+4.  **`labs()`**：设置图表标题和坐标轴标签。
 
 运行代码后，图上会显示两种补充剂对牙齿生长的影响，并标注 Wilcoxon 秩和检验的 p 值，以判断组间差异是否显著。
 
@@ -412,7 +419,7 @@ if (assumptions_met) {
 
 ## 配对 t 检验
 
-使用 `sleep` 数据集进行 **配对 t 检验**，并使用 `ggpubr` 可视化分析结果。
+使用 `sleep` 数据集进行 **配对 t 检验**，并使用 `ggplot2` 可视化分析结果。
 
 ### 数据集简介
 
@@ -447,20 +454,30 @@ print(t_test_result)
 # 加载必要的包
 library(ggpubr)
 
+# 构建配对连线所需的宽格式数据
+sleep_wide = tidyr::pivot_wider(sleep, id_cols = ID,
+                                names_from = group,
+                                values_from = extra,
+                                names_prefix = "group")
+
 # 绘制配对样本数据的箱线图 + 配对连线
-ggpaired(sleep, x = "group", y = "extra",
-         color = "group", line.color = "gray", line.size = 0.5,
-         palette = "jco") +
-  stat_compare_means(method = "t.test", paired = TRUE, label = "p.format") +
+ggplot(sleep, aes(x = group, y = extra, color = group)) +
+  geom_boxplot(width = 0.4, outlier.shape = NA) +
+  geom_point(size = 2) +
+  geom_line(aes(group = ID), color = "gray", linewidth = 0.5) +
+  stat_compare_means(method = "t.test", paired = TRUE,
+                     label = "p.format") +
   labs(title = "两种药物对睡眠时间的影响（配对 t 检验）",
        x = "药物组",
-       y = "额外睡眠时间")
+       y = "额外睡眠时间") +
+  theme_bw() +
+  guides(color = "none")
 ```
 
 #### 结果解读
 
 -   `p-value < 0.05` 说明两种药物在 **睡眠时间上的影响显著不同**。
--   **箱线图** 直观显示 **睡眠时间的分布**，灰色连线表示相同受试者在不同药物下的数据。
+-   **箱线图** 直观显示 **睡眠时间的分布**，灰色连线表示相同受试者在不同药物下的数据（通过 `geom_line(aes(group = ID))` 实现配对连线）。
 
 这样即可完成 **配对 t 检验的正确实现和可视化**。
 
@@ -508,13 +525,17 @@ print(wilcox_test_result)
 library(ggpubr)
 
 # 绘制配对样本数据的箱线图 + 配对连线
-ggpaired(sleep, x = "group", y = "extra",
-         color = "group", line.color = "gray", line.size = 0.5,
-         palette = "jco") +
-  stat_compare_means(method = "wilcox.test", paired = TRUE, label = "p.format") +
+ggplot(sleep, aes(x = group, y = extra, color = group)) +
+  geom_boxplot(width = 0.4, outlier.shape = NA) +
+  geom_point(size = 2) +
+  geom_line(aes(group = ID), color = "gray", linewidth = 0.5) +
+  stat_compare_means(method = "wilcox.test", paired = TRUE,
+                     label = "p.format") +
   labs(title = "两种药物对睡眠时间的影响（Wilcoxon 符号秩检验）",
        x = "药物组",
-       y = "额外睡眠时间")
+       y = "额外睡眠时间") +
+  theme_bw() +
+  guides(color = "none")
 ```
 
 可视化结果分析： 
@@ -591,12 +612,16 @@ anova_result = aov(len ~ factor(dose), data = vc_data)
 summary(anova_result)
 
 # 可视化：箱线图 + 组间显著性
-ggboxplot(vc_data, x = "dose", y = "len",
-          color = "dose", palette = "jco") +
+ggplot(vc_data, aes(x = factor(dose), y = len,
+                    color = factor(dose))) +
+  geom_boxplot() +
+  geom_jitter(width = 0.2, alpha = 0.5) +
   stat_compare_means(method = "anova") +
   labs(title = "VC 处理下不同剂量对牙齿生长的影响（ANOVA）",
        x = "剂量",
-       y = "牙齿长度")
+       y = "牙齿长度",
+       color = "剂量") +
+  theme_bw()
 ```
 
 从ANOVA结果可以看出： 
@@ -695,12 +720,16 @@ kruskal_result = kruskal.test(len ~ factor(dose), data = vc_data)
 print(kruskal_result)
 
 # 可视化：箱线图 + 组间显著性
-ggboxplot(vc_data, x = "dose", y = "len",
-          color = "dose", palette = "jco") +
+ggplot(vc_data, aes(x = factor(dose), y = len,
+                    color = factor(dose))) +
+  geom_boxplot() +
+  geom_jitter(width = 0.2, alpha = 0.5) +
   stat_compare_means(method = "kruskal.test") +
   labs(title = "VC 处理下不同剂量对牙齿生长的影响（Kruskal-Wallis）",
        x = "剂量",
-       y = "牙齿长度")
+       y = "牙齿长度",
+       color = "剂量") +
+  theme_bw()
 ```
 
 从Kruskal-Wallis检验结果可以看出：
@@ -725,8 +754,10 @@ dunn_result = dunn.test(vc_data$len, factor(vc_data$dose),
                         method = "bonferroni")
 
 # 可视化成对比较结果
-ggboxplot(vc_data, x = "dose", y = "len",
-          color = "dose", palette = "jco") +
+ggplot(vc_data, aes(x = factor(dose), y = len,
+                    color = factor(dose))) +
+  geom_boxplot() +
+  geom_jitter(width = 0.2, alpha = 0.5) +
   stat_compare_means(method = "wilcox.test", 
                     comparisons = list(c("0.5", "1"), 
                                      c("1", "2"),
@@ -734,7 +765,9 @@ ggboxplot(vc_data, x = "dose", y = "len",
                     p.adjust.method = "bonferroni") +
   labs(title = "VC剂量组间的多重比较",
        x = "剂量(mg)",
-       y = "牙齿长度")
+       y = "牙齿长度",
+       color = "剂量") +
+  theme_bw()
 ```
 
 事后比较结果解释：
@@ -820,13 +853,15 @@ print(pearson_cor)
 
 ```{r}
 # 可视化：散点图 + Pearson 相关系数
-ggscatter(mtcars, x = "hp", y = "mpg",
-          add = "reg.line", conf.int = TRUE,
-          cor.coef = TRUE, cor.method = "pearson",
-          color = "blue", shape = 16) +
+ggplot(mtcars, aes(x = hp, y = mpg)) +
+  geom_point(color = "blue", shape = 16) +
+  geom_smooth(method = "lm", color = "blue",
+              fill = "lightblue", se = TRUE) +
+  stat_cor(method = "pearson") +
   labs(title = "Pearson 相关性分析：马力 (hp) vs. 燃油效率 (mpg)",
        x = "马力 (hp)",
-       y = "燃油效率 (mpg)")
+       y = "燃油效率 (mpg)") +
+  theme_bw()
 ```
 
 可视化结果分析：
@@ -914,13 +949,15 @@ print(spearman_cor)
 
 ```{r}
 # 可视化：散点图 + Spearman 相关系数
-ggscatter(mtcars, x = "hp", y = "mpg",
-          add = "reg.line", conf.int = TRUE,
-          cor.coef = TRUE, cor.method = "spearman",
-          color = "red", shape = 16) +
+ggplot(mtcars, aes(x = hp, y = mpg)) +
+  geom_point(color = "red", shape = 16) +
+  geom_smooth(method = "lm", color = "red",
+              fill = "lightyellow", se = TRUE) +
+  stat_cor(method = "spearman") +
   labs(title = "Spearman 相关性分析：马力 (hp) vs. 燃油效率 (mpg)",
        x = "马力 (hp)",
-       y = "燃油效率 (mpg)")
+       y = "燃油效率 (mpg)") +
+  theme_bw()
 ```
 
 可视化结果分析：

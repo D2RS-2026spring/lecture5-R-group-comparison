@@ -1,4 +1,4 @@
-# 分组数据分析实战
+# 分组数据分析实战 {#sec-action}
 
 在这一部分，将以 [@gao2021]论文中的数据分析为例，展示分组数据分析和可视化的重复性研究。首先，我们简单介绍一下论文的研究背景、方法和主要结果。然后，使用原始数据进行可重复研究，通过复现论文中的图片，展示分组数据分析和可视化的重复性研究。
 
@@ -17,7 +17,7 @@ showtext::showtext.auto()
 
 ### 研究方法
 
-- 选取 **大肠杆菌 (E. coli K-12，EC)** 与 **荧光假单胞菌 (P. putida KT2440，PP)** 作为共培养模型
+- 选取 **大肠杆菌 (E. coli K-12，EC)** 与 **恶臭假单胞菌 (P. putida KT2440，PP)** 作为共培养模型
 - 在 71 种不同碳源条件下培养，初始比例分别为 **PP纯培养**、**1:1000（EC/PP）共培养**、**1:1（EC/PP）共培养**、 **1000:1（EC/PP）共培养**、**EC纯培养**
 - 通过比色法 (Biolog GEN III) 评估碳源利用率 (CUE)
 - 通过 qPCR 测定共培养中两种菌的相对丰度
@@ -327,7 +327,7 @@ p2
 ```{r}
 #| label: fig-2B
 #| fig-width: 6
-#| fig-height: 0.9
+#| fig-height: 8
 #| fig-cap: "（原文图 2B,C）共培养的最终比例。最终比例显著结果(B)或非显著结果(C)的示例。每个子图上方的标签表示碳源。"
 merged$ratio0 <- relevel(merged$ratio0, "less")
 
@@ -377,6 +377,9 @@ plot_grid(plotlist = plots,ncol=1,labels=c("B","C"))
 
 ```{r}
 #| label: fig-3A
+#| fig-cap: "大肠杆菌和恶臭假单胞菌偏好碳源的CUE比较。(A)大肠杆菌偏好碳源；(B)恶臭假单胞菌偏好碳源。"
+#| fig-width: 10
+#| fig-height: 5
 plots <- lapply(c("EC","PP"),function(x){
   d <- biolog_mono_24h %>% 
     left_join(carbon_name) %>%
