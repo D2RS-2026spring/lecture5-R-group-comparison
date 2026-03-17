@@ -1,14 +1,15 @@
 % ==============================
 % custom.cls
-% 高教社风格中文书籍类
+% 技术书籍风格中文书籍类（阿拉伯数字编号）
 % ==============================
 
 \ProvidesClass{custom}[2025/12/17 自定义书籍类]
 
 % ------------------------------------------------
 % 基类：ctexbook
+% 五号字（~10.5pt）作为基础字号
 % ------------------------------------------------
-\LoadClass[UTF8,zihao=-4]{ctexbook}
+\LoadClass[UTF8,zihao=5]{ctexbook}
 
 
 % =================================================
@@ -19,7 +20,7 @@
 
 
 % =================================================
-% 中文章节与标题样式
+% 中文章节与标题样式（阿拉伯数字编号，技术书籍风格）
 % =================================================
 \ctexset{
   % =================================================
@@ -35,73 +36,74 @@
   indexname      = {索引},
   appendixname   = {附录},
   % ------------------------------
-  % 一级标题：章（第一章）
+  % 一级标题：第 1 章、第 2 章
+  % 三号黑体，左对齐
   % ------------------------------
   chapter = {
-    name = {第,章},
-    number = \chinese{chapter},
-    format = \centering\heiti\zihao{-1}, % 小一号字号，黑体
+    name = {第\space, \space 章},
+    number = \arabic{chapter},
+    format = \raggedright\heiti\zihao{3},
     aftername = \quad,
-    beforeskip = 12bp,
-    afterskip  = 6bp
-  },
-  % ------------------------------
-  % 二级标题：节（第一节）——居中
-  % ------------------------------
-  section = {
-    name = {第,节},
-    number = \chinese{section},
-    format = \centering\heiti\zihao{-2}, % 小二字号，黑体
-    aftername = \quad,
-    beforeskip = 10bp,
+    beforeskip = 8bp,
     afterskip  = 4bp
   },
   % ------------------------------
-  % 三级标题：一、二、
-  % 目录中需要顿号
+  % 二级标题：1.1、1.2
+  % 四号黑体，左对齐
   % ------------------------------
-  subsection = {
-    name = {,、},
-    number = \chinese{subsection},
-    format = \heiti\zihao{3},  % 三号字号，黑体
-    aftername = {},
-    beforeskip = 8bp,
+  section = {
+    name = {},
+    number = \thesection,
+    format = \raggedright\heiti\zihao{4},
+    aftername = \quad,
+    beforeskip = 6bp,
     afterskip  = 2bp
   },
   % ------------------------------
-  % 四级标题：（一）（二）
+  % 三级标题：1.1.1、1.1.2
+  % 小四号黑体
+  % ------------------------------
+  subsection = {
+    name = {},
+    number = \thesubsection,
+    format = \heiti\zihao{-4},
+    aftername = \quad,
+    beforeskip = 4bp,
+    afterskip  = 1bp
+  },
+  % ------------------------------
+  % 四级标题：1.1.1.1
+  % 五号加粗
   % ------------------------------
   subsubsection = {
-    name = {（,）} ,
-    number = \chinese{subsubsection},
-    format = \bfseries\zihao{-4},
-    aftername = {},
-    beforeskip = 6bp,
+    name = {},
+    number = \thesubsubsection,
+    format = \bfseries\zihao{5},
+    aftername = \quad,
+    beforeskip = 3bp,
     afterskip  = 0bp
   },
   % ------------------------------
-  % 五级标题：1. 2.
-  % 不换行，粗体
+  % 五级标题：不换行，粗体
   % ------------------------------
   paragraph = {
-    name = {,.},
-    number = \arabic{paragraph},
-    format = \bfseries\zihao{-4},
+    name = {},
+    number = \theparagraph,
+    format = \bfseries\zihao{5},
     aftername = \quad,
     runin = true,
-    beforeskip = 4bp,
+    beforeskip = 2bp,
     afterskip  = 0bp
   },
   % ------------------------------
-  % 六级标题：（1）（2）
-  % 不换行，粗体
+  % 六级标题：不换行，粗体
   % ------------------------------
   subparagraph = {
-    name = {,},
-    number = {（\arabic{subparagraph}）},
-    format = \bfseries\zihao{-4},
+    name = {},
+    number = \thesubparagraph,
+    format = \bfseries\zihao{5},
     runin = true,
-    beforeskip = 2bp,
+    beforeskip = 1bp,
     afterskip  = 0bp
   },
 }
