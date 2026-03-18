@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Chun-Hui Gao">
-<meta name="dcterms.date" content="2026-03-17">
+<meta name="dcterms.date" content="2026-03-18">
 
 <title>Lecture 5: R Group Comparison</title>
 <style>
@@ -274,6 +274,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#前言" id="toc-前言" class="nav-link active" data-scroll-target="#前言">前言</a>
   <ul class="collapse">
+  <li><a href="#为什么要学习分组数据统计分析" id="toc-为什么要学习分组数据统计分析" class="nav-link" data-scroll-target="#为什么要学习分组数据统计分析">为什么要学习分组数据统计分析？</a></li>
   <li><a href="#学习目标" id="toc-学习目标" class="nav-link" data-scroll-target="#学习目标">学习目标</a></li>
   <li><a href="#适用读者" id="toc-适用读者" class="nav-link" data-scroll-target="#适用读者">适用读者</a></li>
   <li><a href="#章节结构" id="toc-章节结构" class="nav-link" data-scroll-target="#章节结构">章节结构</a></li>
@@ -304,7 +305,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 17, 2026</p>
+      <p class="date">March 18, 2026</p>
     </div>
   </div>
   
@@ -319,6 +320,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="前言" class="level1 unnumbered">
 <h1 class="unnumbered">前言</h1>
 <p>本书是”数据驱动的可重复性研究”系列课程的第五讲，以 <strong>R 语言分组比较</strong> 为核心主题，系统介绍从 R 语言基础到分组数据统计分析的完整知识体系。</p>
+<section id="为什么要学习分组数据统计分析" class="level2">
+<h2 class="anchored" data-anchor-id="为什么要学习分组数据统计分析">为什么要学习分组数据统计分析？</h2>
+<p>在科学研究中，<strong>分组比较</strong> 是最基本也是最常用的分析范式——无论是比较实验组与对照组的差异、评估不同处理条件的效果，还是探索多个因素之间的交互作用，都离不开分组数据的统计分析。然而，面对不同的数据特征（样本量、分布、变量数量），研究者需要在参数方法与非参数方法之间做出合理选择，并掌握从单变量到多变量的完整分析体系。</p>
+<p>本书正是为此而设计：帮助读者建立系统的分组比较方法论，从假设检验的基本流程出发，逐步掌握 t 检验、ANOVA、Wilcoxon 检验、PERMANOVA 等核心方法，并通过真实数据实战，学会用 R 语言完成从数据处理到发表级图表的全流程。</p>
+</section>
 <section id="学习目标" class="level2">
 <h2 class="anchored" data-anchor-id="学习目标">学习目标</h2>
 <p>通过本书的学习，你将能够：</p>
@@ -352,7 +358,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="使用说明" class="level2">
 <h2 class="anchored" data-anchor-id="使用说明">使用说明</h2>
-<p>本书中的所有代码均可直接在 R 环境中运行。建议读者在阅读时同步执行代码，以加深理解。书中使用的主要 R 包包括 <code>tidyverse</code>、<code>ggplot2</code>、<code>ggpubr</code>、<code>vegan</code> 等，请确保已安装这些包。</p>
+<p>本书中的所有代码均可直接在 R 环境中运行。建议读者在阅读时同步执行代码，以加深理解。书中使用的主要 R 包包括 <code>tidyverse</code>、<code>ggplot2</code>、<code>ggpubr</code> 等，请确保已安装这些包。</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -366,11 +372,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>从课程仓库下载本课程的源代码：</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone git@github.com:D2RS-2026spring/lecture5-r-group-comparison.git</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>在开始学习之前，请确保你的 R 版本 ≥ 4.1.0，并已安装以下软件包：</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">"tidyverse"</span>, <span class="st">"ggpubr"</span>, <span class="st">"vegan"</span>, <span class="st">"nlme"</span>,</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"car"</span>, <span class="st">"dunn.test"</span>, <span class="st">"pheatmap"</span>, <span class="st">"cowplot"</span>,</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"corrplot"</span>, <span class="st">"kableExtra"</span>, <span class="st">"agricolae"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>如果你了解 <code>renv</code>，还可以一键创建一个可重复的本地分析环境<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>renv<span class="sc">::</span><span class="fu">restore</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">paste0</span>(<span class="st">"本次使用的 R 版本："</span>, R.version.string))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>本次使用的 R 版本：R version 4.5.2 (2025-10-31)</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"pak"</span>)  <span class="co"># 推荐使用 pak 包安装</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pak</span>(<span class="fu">c</span>(<span class="st">"tidyverse"</span>, <span class="st">"ggpubr"</span>, <span class="st">"vegan"</span>, <span class="st">"nlme"</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"car"</span>, <span class="st">"dunn.test"</span>, <span class="st">"pheatmap"</span>, <span class="st">"cowplot"</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"corrplot"</span>, <span class="st">"kableExtra"</span>, <span class="st">"agricolae"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>如果你了解 <code>renv</code>，还可以一键创建一个可重复的本地分析环境。</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>renv<span class="sc">::</span><span class="fu">restore</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>然后在终端运行 <code>quarto render --to html</code> 编译全书内容<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。</p>
 </div>
 </div>
 
@@ -380,7 +390,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr>
 <ol>
-<li id="fn1"><p>使用 Positron 第一次打开本项目时，renv 会自动尝试创建该环境。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>本项目推荐使用 <a href="https://positron.posit.co/">Positron</a> 作为开发环境。用 Positron 打开本项目后，<code>renv</code> 会自动识别并恢复依赖环境，Quarto 文档也可以直接预览和渲染。如果运行 <code>quarto render</code> 将同时生成 HTML 和 PDF。因 PDF 渲染配置容易出问题，所以如果出错，推荐先生成 HTML 文档。<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 

@@ -2151,7 +2151,7 @@ window.Quarto = {
 #&gt; 
 #&gt; Model: rda(formula = spe_hel ~ N + P + K + Ca + Mg + S + Al + Fe + Mn + Zn + Mo + Baresoil + Humdepth + pH, data = varechem)
 #&gt;          Df Variance      F Pr(&gt;F)  
-#&gt; Model    14  0.25511 1.4968  0.052 .
+#&gt; Model    14  0.25511 1.4968  0.059 .
 #&gt; Residual  9  0.10957                
 #&gt; ---
 #&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
@@ -2232,9 +2232,9 @@ window.Quarto = {
 #&gt; Number of permutations: 999
 #&gt; 
 #&gt; Model: cca(formula = dune ~ A1 + Moisture, data = dune.env)
-#&gt;          Df ChiSquare      F Pr(&gt;F)    
-#&gt; Model     4   0.74374 2.0335  0.001 ***
-#&gt; Residual 15   1.37153                  
+#&gt;          Df ChiSquare      F Pr(&gt;F)   
+#&gt; Model     4   0.74374 2.0335  0.002 **
+#&gt; Residual 15   1.37153                 
 #&gt; ---
 #&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
@@ -2284,7 +2284,7 @@ window.Quarto = {
 #&gt; 
 #&gt; adonis2(formula = dist_dune ~ Management, data = dune.env, permutations = 999)
 #&gt;          Df SumOfSqs      R2      F Pr(&gt;F)   
-#&gt; Model     3   1.4686 0.34161 2.7672  0.003 **
+#&gt; Model     3   1.4686 0.34161 2.7672  0.002 **
 #&gt; Residual 16   2.8304 0.65839                 
 #&gt; Total    19   4.2990 1.00000                 
 #&gt; ---
@@ -2369,11 +2369,11 @@ window.Quarto = {
 #&gt; mantel(xdis = dune_dist, ydis = env_dist, method = "spearman",      permutations = 999) 
 #&gt; 
 #&gt; Mantel statistic r: 0.4634 
-#&gt;       Significance: 0.002 
+#&gt;       Significance: 0.001 
 #&gt; 
 #&gt; Upper quantiles of permutations (null model):
 #&gt;   90%   95% 97.5%   99% 
-#&gt; 0.142 0.192 0.221 0.256 
+#&gt; 0.148 0.203 0.239 0.276 
 #&gt; Permutation: free
 #&gt; Number of permutations: 999</code></pre>
 </div>
@@ -2508,7 +2508,11 @@ r = \frac{\sum_{i=1}^n \sum_{j=1}^n (a_{ij} - \bar{A})(b_{ij} - \bar{B})}{\sqrt{
 <li>重复步骤2-3多次（通常999或9999次）</li>
 <li>计算p值：<span class="math inline">\(p = \frac{N(r_{rand} \geq r_{obs})}{N_{perm}}\)</span></li>
 </ol>
-<p>其中： - <span class="math inline">\(N(r_{rand} \geq r_{obs})\)</span> 是随机值大于等于观察值的次数 - <span class="math inline">\(N_{perm}\)</span> 是总置换次数</p>
+<p>其中：</p>
+<ul>
+<li><span class="math inline">\(N(r_{rand} \geq r_{obs})\)</span> 是随机值大于等于观察值的次数</li>
+<li><span class="math inline">\(N_{perm}\)</span> 是总置换次数</li>
+</ul>
 </section>
 <section id="应用场景" class="level3" data-number="3.14.4">
 <h3 data-number="3.14.4" class="anchored" data-anchor-id="应用场景"><span class="header-section-number">3.14.4</span> 应用场景</h3>
