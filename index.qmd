@@ -63,15 +63,13 @@ pak::pak(c("tidyverse", "ggpubr", "vegan", "nlme",
                     "corrplot", "kableExtra", "agricolae"))
 ```
 
-如果你了解 `renv`，还可以一键创建一个可重复的本地分析环境[^1]。
-
-[^1]: 本项目推荐使用 [Positron](https://positron.posit.co/) 作为开发环境。用 Positron 打开本项目后，`renv` 会自动识别并恢复依赖环境，Quarto 文档也可以直接预览和渲染。
+如果你了解 `renv`，还可以一键创建一个可重复的本地分析环境。
 
 ```r
 renv::restore()
 ```
 
-然后在终端运行 `quarto render --to html` 编译全书内容[^2]。
+然后在终端运行 `quarto render --to html` 编译全书内容[^1]。
 
-[^2]: 如果运行 `quarto render` 将同时生成 HTML 和 PDF。因 PDF 渲染配置容易出问题，所以如果出错，推荐先生成 HTML 文档。
+[^1]: 本项目推荐使用 [Positron](https://positron.posit.co/) 作为开发环境。用 Positron 打开本项目后，`renv` 会自动识别并恢复依赖环境，Quarto 文档也可以直接预览和渲染。如果运行 `quarto render` 将同时生成 HTML 和 PDF。因 PDF 渲染配置容易出问题，所以如果出错，推荐先生成 HTML 文档。
 :::
