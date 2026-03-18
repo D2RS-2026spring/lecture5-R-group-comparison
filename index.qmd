@@ -52,7 +52,8 @@ git clone git@github.com:D2RS-2026spring/lecture5-r-group-comparison.git
 在开始学习之前，请确保你的 R 版本 ≥ 4.1.0，并已安装以下软件包：
 
 ```{r}
-R.version.string # 本次使用的 R 版本
+#| results: asis
+cat(paste0("本次使用的 R 版本：", R.version.string))
 ```
 
 ```r
