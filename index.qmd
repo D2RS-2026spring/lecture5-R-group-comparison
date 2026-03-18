@@ -2,6 +2,12 @@
 
 本书是"数据驱动的可重复性研究"系列课程的第五讲，以 **R 语言分组比较** 为核心主题，系统介绍从 R 语言基础到分组数据统计分析的完整知识体系。
 
+## 为什么要学习分组数据统计分析？
+
+在科学研究中，**分组比较** 是最基本也是最常用的分析范式——无论是比较实验组与对照组的差异、评估不同处理条件的效果，还是探索多个因素之间的交互作用，都离不开分组数据的统计分析。然而，面对不同的数据特征（样本量、分布、变量数量），研究者需要在参数方法与非参数方法之间做出合理选择，并掌握从单变量到多变量的完整分析体系。
+
+本书正是为此而设计：帮助读者建立系统的分组比较方法论，从假设检验的基本流程出发，逐步掌握 t 检验、ANOVA、Wilcoxon 检验、PERMANOVA 等核心方法，并通过真实数据实战，学会用 R 语言完成从数据处理到发表级图表的全流程。
+
 ## 学习目标
 
 通过本书的学习，你将能够：
@@ -43,17 +49,22 @@
 git clone git@github.com:D2RS-2026spring/lecture5-r-group-comparison.git
 ```
 
-在开始学习之前，请确保你的 R 版本 ≥ 4.1.0（此次编译使用的 R 版本是 **`{r} R.version.string`**），并已安装以下软件包：
+在开始学习之前，请确保你的 R 版本 ≥ 4.1.0，并已安装以下软件包：
+
+```{r}
+R.version.string # 本次使用的 R 版本
+```
 
 ```r
-install.packages(c("tidyverse", "ggpubr", "vegan", "nlme",
+install.packages("pak")  # 推荐使用 pak 包安装
+pak::pak(c("tidyverse", "ggpubr", "vegan", "nlme",
                     "car", "dunn.test", "pheatmap", "cowplot",
                     "corrplot", "kableExtra", "agricolae"))
 ```
 
 如果你了解 `renv`，还可以一键创建一个可重复的本地分析环境[^1]。
 
-[^1]: 使用 Positron 第一次打开本项目时，renv 会自动尝试创建该环境。
+[^1]: 本项目推荐使用 [Positron](https://positron.posit.co/) 作为开发环境。用 Positron 打开本项目后，`renv` 会自动识别并恢复依赖环境，Quarto 文档也可以直接预览和渲染。
 
 ```r
 renv::restore()
