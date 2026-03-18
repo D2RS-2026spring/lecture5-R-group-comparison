@@ -313,8 +313,8 @@ aov_p
 ```{r}
 #| label: fig-aov-p-density
 #| fig-cap: "所有碳源中检验最终比例三种共培养是否不同的调整后p值(ANOVA)的密度分布。"
-#| fig-width: 3
-#| fig-height: 2.5
+#| fig-width: 4
+#| fig-height: 3
 p.cutoff <- 0.05
 p1 <- ggplot(aov_p,aes(p.adj)) + 
   # geom_histogram(bins=30) + 

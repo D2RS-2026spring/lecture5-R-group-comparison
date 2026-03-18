@@ -178,31 +178,20 @@ summary(aov_N)
 单因素 ANOVA 的结果中：
 
 * `Df`：自由度（Degrees of Freedom）
-
   * `N` 的自由度 = 1（因为 `N` 有 2 个水平，自由度 = 水平数 - 1）
   * `Residuals`（残差）的自由度 = 22（总观测数 24 - 因子自由度 1 = 23？这里减去 1 是因为没有截距吗？实际上 R 默认还减去因子 1 个自由度，残差 = 24-2=22）
-
 * `Sum Sq`：平方和（Sum of Squares）
-
   * `N` 的平方和 = 189.3，表示因子 N 对产量的变异贡献
   * `Residuals` 的平方和 = 687.1，表示未被 N 解释的变异
-
 * `Mean Sq`：均方（Mean Square） = Sum Sq / Df
-
   * `N` = 189.28
   * `Residuals` = 31.23
-
 * `F value` = 189.28 / 31.23 ≈ 6.061
-
   * F 值越大，说明因子对产量的影响越显著
-
 * `Pr(>F)` = 0.0221
-
   * 这是 p 值，表示在零假设（N 对产量没有影响）下观察到 F ≥ 6.061 的概率
   * 0.0221 < 0.05，说明 N 对产量的影响 **显著**
-
 * `Signif. codes: *` 表示显著性水平
-
   * `*` → p < 0.05
 
 这个结果说明，氮肥 N 对作物产量有显著正向或负向影响（具体正负可以看平均产量差异）。
@@ -256,8 +245,6 @@ summary(aov_2way)
 ```{r}
 #| label: fig-datasets-npk-interaction-NP
 #| fig-cap: "NPK数据集中N×P交互作用图"
-#| fig-width: 5
-#| fig-height: 3.5
 interaction.plot(
   npk$N, npk$P, npk$yield, fun = mean,
   col = c("red","blue"), lty = 1:2,
@@ -267,12 +254,7 @@ interaction.plot(
 
 在这幅图上，横轴是 N 的水平，不同颜色表示 P 的水平，纵轴是产量平均值。如果线基本平行，表示没有明显交互作用，即 N 的效应对产量变化不依赖于 P 的水平，这种情况下可以认为 N 和 P 的效应是独立的；如果线明显交叉或斜率不同，则表示存在交互作用，如 N 施肥时产量随 P 的水平变化很大，但不施用 N 时变化小，说明 N、P 有交互作用。
 
-
-```{r}
-#| label: fig-datasets-npk-interaction-NK
-#| fig-cap: "NPK数据集中N×K交互作用图"
-#| fig-width: 5
-#| fig-height: 3.5
+```r
 # N × K 交互作用
 interaction.plot(
   npk$N, npk$K, npk$yield, fun = mean,
@@ -281,15 +263,7 @@ interaction.plot(
   xlab = "N level", ylab = "Mean yield",
   main = "N × K interaction"
 )
-```
 
-可以分别画 N×P、N×K、P×K 的交互作用图，直观观察交互效应。
-
-```{r}
-#| label: fig-datasets-npk-interaction-PK
-#| fig-cap: "NPK数据集中P×K交互作用图"
-#| fig-width: 5
-#| fig-height: 3.5
 # P × K 交互作用
 interaction.plot(
   npk$P, npk$K, npk$yield, fun = mean,
