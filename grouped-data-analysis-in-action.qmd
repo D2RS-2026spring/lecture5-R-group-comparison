@@ -491,6 +491,8 @@ p2
 ```{r}
 #| label: fig-coculture-enhance-CUE
 #| fig-cap: "单培养和共培养的比较。用箱线图显示了单培养和共培养的碳源利用效率(CUE)。为了便于比较，在图上做了一个水平参考线，表示所有样本的中位数。此外，还在图上标记了每个初始比例下的中位数。"
+#| fig-width: 3.5
+#| fig-height: 3.5
 p_cue <- ggplot(biolog_24h,aes(ratio0,A590)) + 
   geom_boxplot() +
   geom_hline(aes(yintercept = median(A590)),lty=2,color="firebrick") +
@@ -514,6 +516,8 @@ p_cue
 ```{r}
 #| label: fig-cue-pca
 #| fig-cap: "碳源利用谱的PCA分析。椭圆代表聚类的95%置信区间。"
+#| fig-width: 5
+#| fig-height: 3.5
 library(vegan)
 
 # PCA
@@ -552,7 +556,7 @@ p
 
 ```{r}
 #| label: fig-cue-heatmap
-#| fig-width: 6
+#| fig-width: 6.5
 #| fig-height: 3.5
 #| fig-cap: 初始比例调控共培养的碳源利用谱。按使用组对碳源进行聚类。在热图中,顶部的条带表示碳源类型,底部的数字表示碳源ID,右侧给出了实验重复。图例条表示CUE值的范围。
 anno_carbon_group <- carbon_group %>% 
